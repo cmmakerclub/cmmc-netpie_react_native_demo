@@ -35,9 +35,9 @@ class netpie_react_native_demo extends Component {
         this.microgear.on('connected', () => {
             console.log('Connected...');
             this.microgear.subscribe("/CMMC/gearname/+/temp");
-            // setInterval(() => {
-            //     this.microgear.chat('mygear', 'Hello world.');
-            // }, 400);
+            setInterval(() => {
+                this.microgear.chat('mygear', 'Hello world.');
+            }, 400);
         });
 
         this.microgear.on('message', (topic, body) => {
@@ -57,7 +57,6 @@ class netpie_react_native_demo extends Component {
 
     componentDidMount() {
         this.microgear.connect(this.APPID);
-        console.log("DID MOUNT");
     }
 
     render() {
