@@ -36,6 +36,7 @@ class netpie_react_native_demo extends Component {
 
         microgear.on('connected', () => {
             console.log('Connected...');
+            this.setState({msg: 'Connected'});
             microgear.subscribe("/HelloNETPIE/gearname/weather/temp");
             microgear.subscribe("/HelloNETPIE/gearname/weather/humid");
         });
@@ -75,6 +76,9 @@ class netpie_react_native_demo extends Component {
                 <View style={styles.body}>
                     <Text style={styles.labelSensor}>Humid : { this.state.humid } %</Text>
                 </View>
+                <View style={styles.msg}>
+                    <Text style={styles.msgStyle}>{ this.state.msg}</Text>
+                </View>
             </View>
         );
     }
@@ -91,6 +95,9 @@ const styles = StyleSheet.create({
         //backgroundColor: 'red',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    msgStyle: {
+        flex: 1,
     },
     body: {
         flex: 5,
