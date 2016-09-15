@@ -16,43 +16,50 @@ let MicroGear = require('react-native-cmmc-microgear');
 
 class netpie_react_native_demo extends Component {
 
-    APPID = "CMMC";
-    KEY = "Qiah96b7mdcmtvq";
-    SECRET = "bt81P9VyTilLkdMJrN9c10Jph";
+    APPID = "HelloNETPIE";
+    KEY = "EAHSjdbQZMtDlJD";
+    SECRET = "ZdsVsuu7EkBPrlnmJwO08Rjb9";
+    gearPrefix = "/" + this.APPID + "/gearname";
 
     constructor() {
         super();
         this.state = {
             msg: 'Connecting..',
-            topic: ''
+            temp: '?',
+            humid: '?'
         };
 
-        this.microgear = MicroGear.create({
+        let microgear = MicroGear.create({
             key: this.KEY,
             secret: this.SECRET
         });
 
-        this.microgear.on('connected', () => {
+        microgear.on('connected', () => {
             console.log('Connected...');
-            this.microgear.subscribe("/CMMC/gearname/+/temp");
-            setInterval(() => {
-                this.microgear.chat('mygear', 'Hello world.');
-            }, 400);
+            microgear.subscribe("/HelloNETPIE/gearname/weather/temp");
+            microgear.subscribe("/HelloNETPIE/gearname/weather/humid");
         });
 
-        this.microgear.on('message', (topic, body) => {
-            // console.log('incoming : ' + topic + ' : ' + body);
-            this.setState({msg: body});
+        microgear.on('message', (topic, body) => {
+            // console.log("topic = ", topic, "body=", body);
+            if (topic == "/HelloNETPIE/gearname/weather/temp") {
+                this.setState({temp: body});
+            }
+            else if (topic == "/HelloNETPIE/gearname/weather/humid") {
+                this.setState({humid: body});
+            }
         });
 
-        this.microgear.on('closed', () => {
+        microgear.on('closed', () => {
             console.log('Closed...');
         });
 
-        this.microgear.on("error", (reason) => {
+        microgear.on("error", (reason) => {
             console.log("reason = ", reason);
             this.setState({msg: reason});
         });
+
+        this.microgear = microgear;
     }
 
     componentDidMount() {
@@ -62,9 +69,12 @@ class netpie_react_native_demo extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.dataText}>
-                    {this.state.msg }
-                </Text>
+                <View style={styles.header}>
+                    <Text style={styles.labelSensor}>Temp : { this.state.temp } C</Text>
+                </View>
+                <View style={styles.body}>
+                    <Text style={styles.labelSensor}>Humid : { this.state.humid } %</Text>
+                </View>
             </View>
         );
     }
@@ -73,14 +83,25 @@ class netpie_react_native_demo extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flexDirection: 'column',
         backgroundColor: '#F5FCFF',
     },
-    dataText: {
-        fontSize: 80,
-        textAlign: 'center',
+    header: {
+        flex: 5,
+        //backgroundColor: 'red',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
+    body: {
+        flex: 5,
+        //backgroundColor: 'blue',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    },
+    labelSensor: {
+        fontSize: 30,
+        fontWeight: '100'
+    }
 });
 
 AppRegistry.registerComponent('netpie_react_native_demo', () => netpie_react_native_demo);
